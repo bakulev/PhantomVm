@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-using DiagramDesigner.Helpers;
 using DiagramDesigner;
-using System.ComponentModel;
-using System.Windows.Data;
-using DemoApp.Persistence.Common;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,7 +14,6 @@ namespace DemoApp
         private int? savedDiagramId;
         private List<SelectableDesignerItemViewModelBase> itemsToRemove;
         private IMessageBoxService messageBoxService;
-        private IDatabaseAccessService databaseAccessService;
         private DiagramViewModel diagramViewModel = new DiagramViewModel();
         private bool isBusy = false;
 
@@ -28,12 +21,6 @@ namespace DemoApp
         public Window1ViewModel()
         {
             messageBoxService = ApplicationServicesProvider.Instance.Provider.MessageBoxService;
-            databaseAccessService = ApplicationServicesProvider.Instance.Provider.DatabaseAccessService;
-
-            foreach (var savedDiagram in databaseAccessService.FetchAllDiagram())
-            {
-                savedDiagrams.Add(savedDiagram.Id);
-            }
 
             ToolBoxViewModel = new ToolBoxViewModel();
             DiagramViewModel = new DiagramViewModel();
@@ -194,7 +181,6 @@ namespace DemoApp
             }
 
             IsBusy = true;
-            DiagramItem wholeDiagramToSave = null;
 
             Task<int> task = Task.Factory.StartNew<int>(() =>
             {
@@ -202,30 +188,27 @@ namespace DemoApp
                 if (SavedDiagramId != null)
                 {
                     int currentSavedDiagramId = (int)SavedDiagramId.Value;
-                    wholeDiagramToSave = databaseAccessService.FetchDiagram(currentSavedDiagramId);
 
                     //If we have a saved diagram, we need to make sure we clear out all the removed items that
                     //the user deleted as part of this work sesssion
                     foreach (var itemToRemove in itemsToRemove)
                     {
-                        DeleteFromDatabase(wholeDiagramToSave, itemToRemove);
+                        //DeleteFromDatabase(wholeDiagramToSave, itemToRemove);
                     }
                     //start with empty collections of connections and items, which will be populated based on current diagram
-                    wholeDiagramToSave.ConnectionIds = new List<int>();
-                    wholeDiagramToSave.DesignerItems = new List<DiagramItemData>();
                 }
                 else
                 {
-                    wholeDiagramToSave = new DiagramItem();
+                    //wholeDiagramToSave = new DiagramItem();
                 }
 
                 //ensure that itemsToRemove is cleared ready for any new changes within a session
                 itemsToRemove = new List<SelectableDesignerItemViewModelBase>();
 
-                SavePersistDesignerItem(wholeDiagramToSave, DiagramViewModel);
+                //SavePersistDesignerItem(wholeDiagramToSave, DiagramViewModel);
 
-                wholeDiagramToSave.Id = databaseAccessService.SaveDiagram(wholeDiagramToSave);
-                return wholeDiagramToSave.Id;
+                //wholeDiagramToSave.Id = databaseAccessService.SaveDiagram(wholeDiagramToSave);
+                return 0; // wholeDiagramToSave.Id;
             });
             task.ContinueWith((ant) =>
             {
@@ -243,56 +226,39 @@ namespace DemoApp
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
-        private void SavePersistDesignerItem(IDiagramItem wholeDiagramToSave, IDiagramViewModel diagramViewModel)
+        private void SavePersistDesignerItem(IDiagramViewModel diagramViewModel)
         {
             //Save all PersistDesignerItemViewModel
             foreach (var persistItemVM in diagramViewModel.Items.OfType<PersistDesignerItemViewModel>())
             {
-                PersistDesignerItem persistDesignerItem = new PersistDesignerItem(persistItemVM.Id, persistItemVM.Left, persistItemVM.Top, persistItemVM.ItemWidth, persistItemVM.ItemHeight, persistItemVM.HostUrl);
-                persistItemVM.Id = databaseAccessService.SavePersistDesignerItem(persistDesignerItem);
-                wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(persistDesignerItem.Id, typeof(PersistDesignerItem)));
+                //wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(persistDesignerItem.Id, typeof(PersistDesignerItem)));
             }
             //Save all SettingsDesignerItemViewModel
             foreach (var settingsItemVM in diagramViewModel.Items.OfType<SettingsDesignerItemViewModel>())
             {
-                SettingsDesignerItem settingsDesignerItem = new SettingsDesignerItem(settingsItemVM.Id, settingsItemVM.Left, settingsItemVM.Top, settingsItemVM.ItemWidth, settingsItemVM.ItemHeight, settingsItemVM.Setting1);
-                settingsItemVM.Id = databaseAccessService.SaveSettingDesignerItem(settingsDesignerItem);
-                wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(settingsDesignerItem.Id, typeof(SettingsDesignerItem)));
+                //wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(settingsDesignerItem.Id, typeof(SettingsDesignerItem)));
             }
             //Save all GroupingDesignerItemViewModel
             foreach (var groupingItemVM in diagramViewModel.Items.OfType<GroupingDesignerItemViewModel>())
             {
-                GroupDesignerItem groupDesignerItem = new GroupDesignerItem(groupingItemVM.Id, groupingItemVM.Left, groupingItemVM.Top, groupingItemVM.ItemWidth, groupingItemVM.ItemHeight);
                 if(groupingItemVM.Items != null && groupingItemVM.Items.Count > 0)
                 {
-                    SavePersistDesignerItem(groupDesignerItem, groupingItemVM);
+                    //SavePersistDesignerItem(groupDesignerItem, groupingItemVM);
                 }
-                groupingItemVM.Id = databaseAccessService.SaveGroupingDesignerItem(groupDesignerItem);
-                wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(groupDesignerItem.Id, typeof(GroupDesignerItem)));
+                //wholeDiagramToSave.DesignerItems.Add(new DiagramItemData(groupDesignerItem.Id, typeof(GroupDesignerItem)));
             }
             //Save all connections which should now have their Connection.DataItems filled in with correct Ids
             foreach (var connectionVM in diagramViewModel.Items.OfType<ConnectorViewModel>())
             {
                 FullyCreatedConnectorInfo sinkConnector = connectionVM.SinkConnectorInfo as FullyCreatedConnectorInfo;
 
-                Connection connection = new Connection(
-                    connectionVM.Id,
-                    connectionVM.SourceConnectorInfo.DataItem.Id,
-                    GetOrientationFromConnector(connectionVM.SourceConnectorInfo.Orientation),
-                    GetTypeOfDiagramItem(connectionVM.SourceConnectorInfo.DataItem),
-                    sinkConnector.DataItem.Id,
-                    GetOrientationFromConnector(sinkConnector.Orientation),
-                    GetTypeOfDiagramItem(sinkConnector.DataItem));
-
-                connectionVM.Id = databaseAccessService.SaveConnection(connection);
-                wholeDiagramToSave.ConnectionIds.Add(connectionVM.Id);
+                //wholeDiagramToSave.ConnectionIds.Add(connectionVM.Id);
             }
         }
 
         private void ExecuteLoadDiagramCommand(object parameter)
         {
             IsBusy = true;
-            DiagramItem wholeDiagramToLoad = null;
             if (SavedDiagramId == null)
             {
                 messageBoxService.ShowError("You need to select a diagram to load");
@@ -305,9 +271,9 @@ namespace DemoApp
                 itemsToRemove = new List<SelectableDesignerItemViewModelBase>();
                 DiagramViewModel diagramViewModel = new DiagramViewModel();
 
-                wholeDiagramToLoad = databaseAccessService.FetchDiagram((int)SavedDiagramId.Value);
+                //wholeDiagramToLoad = databaseAccessService.FetchDiagram((int)SavedDiagramId.Value);
 
-                LoadPerstistDesignerItems(wholeDiagramToLoad, diagramViewModel);
+                LoadPerstistDesignerItems(diagramViewModel);
 
                 return diagramViewModel;
             });
@@ -315,57 +281,52 @@ namespace DemoApp
             {
                 this.DiagramViewModel = ant.Result;
                 IsBusy = false;
-                messageBoxService.ShowInformation(string.Format("Finished loading Diagram Id : {0}", wholeDiagramToLoad.Id));
+                //messageBoxService.ShowInformation(string.Format("Finished loading Diagram Id : {0}", wholeDiagramToLoad.Id));
 
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
         }
 
-        private void LoadPerstistDesignerItems(IDiagramItem wholeDiagramToLoad, IDiagramViewModel diagramViewModel)
+        private void LoadPerstistDesignerItems(IDiagramViewModel diagramViewModel)
         {
             //load diagram items
-            foreach (DiagramItemData diagramItemData in wholeDiagramToLoad.DesignerItems)
+            //foreach (DiagramItemData diagramItemData in wholeDiagramToLoad.DesignerItems)
             {
-                if (diagramItemData.ItemType == typeof(PersistDesignerItem))
+                //if (diagramItemData.ItemType == typeof(PersistDesignerItem))
                 {
-                    PersistDesignerItem persistedDesignerItem = databaseAccessService.FetchPersistDesignerItem(diagramItemData.ItemId);
-                    PersistDesignerItemViewModel persistDesignerItemViewModel =
-                        new PersistDesignerItemViewModel(persistedDesignerItem.Id, diagramViewModel, persistedDesignerItem.Left, persistedDesignerItem.Top, persistedDesignerItem.ItemWidth, persistedDesignerItem.ItemHeight, persistedDesignerItem.HostUrl);
-                    diagramViewModel.Items.Add(persistDesignerItemViewModel);
+                    //PersistDesignerItemViewModel persistDesignerItemViewModel =
+                    //    new PersistDesignerItemViewModel(persistedDesignerItem.Id, diagramViewModel, persistedDesignerItem.Left, persistedDesignerItem.Top, persistedDesignerItem.ItemWidth, persistedDesignerItem.ItemHeight, persistedDesignerItem.HostUrl);
+                    //diagramViewModel.Items.Add(persistDesignerItemViewModel);
                 }
-                if (diagramItemData.ItemType == typeof(SettingsDesignerItem))
+                //if (diagramItemData.ItemType == typeof(SettingsDesignerItem))
                 {
-                    SettingsDesignerItem settingsDesignerItem = databaseAccessService.FetchSettingsDesignerItem(diagramItemData.ItemId);
-                    SettingsDesignerItemViewModel settingsDesignerItemViewModel =
-                        new SettingsDesignerItemViewModel(settingsDesignerItem.Id, diagramViewModel, settingsDesignerItem.Left, settingsDesignerItem.Top, settingsDesignerItem.ItemWidth, settingsDesignerItem.ItemHeight, settingsDesignerItem.Setting1);
-                    diagramViewModel.Items.Add(settingsDesignerItemViewModel);
+                    //SettingsDesignerItemViewModel settingsDesignerItemViewModel =
+                    //    new SettingsDesignerItemViewModel(settingsDesignerItem.Id, diagramViewModel, settingsDesignerItem.Left, settingsDesignerItem.Top, settingsDesignerItem.ItemWidth, settingsDesignerItem.ItemHeight, settingsDesignerItem.Setting1);
+                    //diagramViewModel.Items.Add(settingsDesignerItemViewModel);
                 }
-                if (diagramItemData.ItemType == typeof(GroupDesignerItem))
+                //if (diagramItemData.ItemType == typeof(GroupDesignerItem))
                 {
-                    GroupDesignerItem groupDesignerItem = databaseAccessService.FetchGroupingDesignerItem(diagramItemData.ItemId);
-                    GroupingDesignerItemViewModel groupingDesignerItemViewModel =
-                        new GroupingDesignerItemViewModel(groupDesignerItem.Id, diagramViewModel, groupDesignerItem.Left, groupDesignerItem.Top, groupDesignerItem.ItemWidth, groupDesignerItem.ItemHeight);
-                    if(groupDesignerItem.DesignerItems != null && groupDesignerItem.DesignerItems.Count > 0)
+                    //GroupingDesignerItemViewModel groupingDesignerItemViewModel =
+                    //    new GroupingDesignerItemViewModel(groupDesignerItem.Id, diagramViewModel, groupDesignerItem.Left, groupDesignerItem.Top, groupDesignerItem.ItemWidth, groupDesignerItem.ItemHeight);
+                    //if(groupDesignerItem.DesignerItems != null && groupDesignerItem.DesignerItems.Count > 0)
                     {
-                        LoadPerstistDesignerItems(groupDesignerItem, groupingDesignerItemViewModel);
+                        //LoadPerstistDesignerItems(groupingDesignerItemViewModel);
                     }
-                    diagramViewModel.Items.Add(groupingDesignerItemViewModel);
+                    //diagramViewModel.Items.Add(groupingDesignerItemViewModel);
                 }
             }
             //load connection items
-            foreach (int connectionId in wholeDiagramToLoad.ConnectionIds)
+            //foreach (int connectionId in wholeDiagramToLoad.ConnectionIds)
             {
-                Connection connection = databaseAccessService.FetchConnection(connectionId);
+                //DesignerItemViewModelBase sourceItem = GetConnectorDataItem(diagramViewModel, connection.SourceId, connection.SourceType);
+                //ConnectorOrientation sourceConnectorOrientation = GetOrientationForConnector(connection.SourceOrientation);
+                //FullyCreatedConnectorInfo sourceConnectorInfo = GetFullConnectorInfo(connection.Id, sourceItem, sourceConnectorOrientation);
 
-                DesignerItemViewModelBase sourceItem = GetConnectorDataItem(diagramViewModel, connection.SourceId, connection.SourceType);
-                ConnectorOrientation sourceConnectorOrientation = GetOrientationForConnector(connection.SourceOrientation);
-                FullyCreatedConnectorInfo sourceConnectorInfo = GetFullConnectorInfo(connection.Id, sourceItem, sourceConnectorOrientation);
+                //DesignerItemViewModelBase sinkItem = GetConnectorDataItem(diagramViewModel, connection.SinkId, connection.SinkType);
+                //ConnectorOrientation sinkConnectorOrientation = GetOrientationForConnector(connection.SinkOrientation);
+                //FullyCreatedConnectorInfo sinkConnectorInfo = GetFullConnectorInfo(connection.Id, sinkItem, sinkConnectorOrientation);
 
-                DesignerItemViewModelBase sinkItem = GetConnectorDataItem(diagramViewModel, connection.SinkId, connection.SinkType);
-                ConnectorOrientation sinkConnectorOrientation = GetOrientationForConnector(connection.SinkOrientation);
-                FullyCreatedConnectorInfo sinkConnectorInfo = GetFullConnectorInfo(connection.Id, sinkItem, sinkConnectorOrientation);
-
-                ConnectorViewModel connectionVM = new ConnectorViewModel(connection.Id, diagramViewModel, sourceConnectorInfo, sinkConnectorInfo);
-                diagramViewModel.Items.Add(connectionVM);
+                //ConnectorViewModel connectionVM = new ConnectorViewModel(connection.Id, diagramViewModel, sourceConnectorInfo, sinkConnectorInfo);
+                //diagramViewModel.Items.Add(connectionVM);
             }
         }
 
@@ -503,83 +464,39 @@ namespace DemoApp
 
         private Type GetTypeOfDiagramItem(DesignerItemViewModelBase vmType)
         {
-            if (vmType is PersistDesignerItemViewModel)
-                return typeof(PersistDesignerItem);
-            if (vmType is SettingsDesignerItemViewModel)
-                return typeof(SettingsDesignerItem);
-            if (vmType is GroupingDesignerItemViewModel)
-                return typeof(GroupDesignerItem);
-            
+            //if (vmType is PersistDesignerItemViewModel)
+            //    return typeof(PersistDesignerItem);
+            //if (vmType is SettingsDesignerItemViewModel)
+            //    return typeof(SettingsDesignerItem);
+            //if (vmType is GroupingDesignerItemViewModel)
+            //    return typeof(GroupDesignerItem);
 
-            throw new InvalidOperationException(string.Format("Unknown diagram type. Currently only {0} and {1} are supported",
-                typeof(PersistDesignerItem).AssemblyQualifiedName,
-                typeof(SettingsDesignerItemViewModel).AssemblyQualifiedName
-                ));
 
+            //throw new InvalidOperationException(string.Format("Unknown diagram type. Currently only {0} and {1} are supported",
+            //    typeof(PersistDesignerItem).AssemblyQualifiedName,
+            //    typeof(SettingsDesignerItemViewModel).AssemblyQualifiedName
+            //    ));
+            return typeof(int);
         }
 
         private DesignerItemViewModelBase GetConnectorDataItem(IDiagramViewModel diagramViewModel, int conectorDataItemId, Type connectorDataItemType)
         {
             DesignerItemViewModelBase dataItem = null;
 
-            if (connectorDataItemType == typeof(PersistDesignerItem))
+            //if (connectorDataItemType == typeof(PersistDesignerItem))
             {
                 dataItem = diagramViewModel.Items.OfType<PersistDesignerItemViewModel>().Single(x => x.Id == conectorDataItemId);
             }
 
-            if (connectorDataItemType == typeof(SettingsDesignerItem))
+            //if (connectorDataItemType == typeof(SettingsDesignerItem))
             {
                 dataItem = diagramViewModel.Items.OfType<SettingsDesignerItemViewModel>().Single(x => x.Id == conectorDataItemId);
             }
-            if (connectorDataItemType == typeof(GroupDesignerItem))
+            //if (connectorDataItemType == typeof(GroupDesignerItem))
             {
                 dataItem = diagramViewModel.Items.OfType<GroupingDesignerItemViewModel>().Single(x => x.Id == conectorDataItemId);
             }
             return dataItem;
-        }
-
-
-        private Orientation GetOrientationFromConnector(ConnectorOrientation connectorOrientation)
-        {
-            Orientation result = Orientation.None;
-            switch (connectorOrientation)
-            {
-                case ConnectorOrientation.Bottom:
-                    result = Orientation.Bottom;
-                    break;
-                case ConnectorOrientation.Left:
-                    result = Orientation.Left;
-                    break;
-                case ConnectorOrientation.Top:
-                    result = Orientation.Top;
-                    break;
-                case ConnectorOrientation.Right:
-                    result = Orientation.Right;
-                    break;
-            }
-            return result;
-        }
-
-
-        private ConnectorOrientation GetOrientationForConnector(Orientation persistedOrientation)
-        {
-            ConnectorOrientation result = ConnectorOrientation.None;
-            switch (persistedOrientation)
-            {
-                case Orientation.Bottom:
-                    result = ConnectorOrientation.Bottom;
-                    break;
-                case Orientation.Left:
-                    result = ConnectorOrientation.Left;
-                    break;
-                case Orientation.Top:
-                    result = ConnectorOrientation.Top;
-                    break;
-                case Orientation.Right:
-                    result = ConnectorOrientation.Right;
-                    break;
-            }
-            return result;
         }
 
         private bool ItemsToDeleteHasConnector(List<SelectableDesignerItemViewModelBase> itemsToRemove, FullyCreatedConnectorInfo connector)
@@ -589,29 +506,29 @@ namespace DemoApp
 
 
 
-        private void DeleteFromDatabase(DiagramItem wholeDiagramToAdjust, SelectableDesignerItemViewModelBase itemToDelete)
+        private void DeleteFromDatabase(SelectableDesignerItemViewModelBase itemToDelete)
         {
 
             //make sure the item is removes from Diagram as well as removing them as individual items from database
             if (itemToDelete is PersistDesignerItemViewModel)
             {
-                DiagramItemData diagramItemToRemoveFromParent = wholeDiagramToAdjust.DesignerItems.Where(x => x.ItemId == itemToDelete.Id && x.ItemType == typeof(PersistDesignerItem)).Single();
-                wholeDiagramToAdjust.DesignerItems.Remove(diagramItemToRemoveFromParent);
-                databaseAccessService.DeletePersistDesignerItem(itemToDelete.Id);
+                //DiagramItemData diagramItemToRemoveFromParent = wholeDiagramToAdjust.DesignerItems.Where(x => x.ItemId == itemToDelete.Id && x.ItemType == typeof(PersistDesignerItem)).Single();
+                //wholeDiagramToAdjust.DesignerItems.Remove(diagramItemToRemoveFromParent);
+                //databaseAccessService.DeletePersistDesignerItem(itemToDelete.Id);
             }
             if (itemToDelete is SettingsDesignerItemViewModel)
             {
-                DiagramItemData diagramItemToRemoveFromParent = wholeDiagramToAdjust.DesignerItems.Where(x => x.ItemId == itemToDelete.Id && x.ItemType == typeof(SettingsDesignerItem)).Single();
-                wholeDiagramToAdjust.DesignerItems.Remove(diagramItemToRemoveFromParent);
-                databaseAccessService.DeleteSettingDesignerItem(itemToDelete.Id);
+                //DiagramItemData diagramItemToRemoveFromParent = wholeDiagramToAdjust.DesignerItems.Where(x => x.ItemId == itemToDelete.Id && x.ItemType == typeof(SettingsDesignerItem)).Single();
+                //wholeDiagramToAdjust.DesignerItems.Remove(diagramItemToRemoveFromParent);
+                //databaseAccessService.DeleteSettingDesignerItem(itemToDelete.Id);
             }
             if (itemToDelete is ConnectorViewModel)
             {
-                wholeDiagramToAdjust.ConnectionIds.Remove(itemToDelete.Id);
-                databaseAccessService.DeleteConnection(itemToDelete.Id);
+                //wholeDiagramToAdjust.ConnectionIds.Remove(itemToDelete.Id);
+                //databaseAccessService.DeleteConnection(itemToDelete.Id);
             }
 
-            databaseAccessService.SaveDiagram(wholeDiagramToAdjust);
+            //databaseAccessService.SaveDiagram(wholeDiagramToAdjust);
 
 
         }
