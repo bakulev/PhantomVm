@@ -55,6 +55,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="Views\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VirtualMachine\OpCodes.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmArray.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmClass.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmCode.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmInt.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmInterface.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmNull.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmObject.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmString.cs" />
+    <Compile Include="VirtualMachine\PvmRoot.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -67,6 +81,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -94,5 +112,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
