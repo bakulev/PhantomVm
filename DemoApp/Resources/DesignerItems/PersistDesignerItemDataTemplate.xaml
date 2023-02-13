@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DemoApp">
+
+
+    <!-- DataTemplate for DesignerCanvas look and feel -->
+    <DataTemplate DataType="{x:Type local:PersistDesignerItemViewModel}">
+        <Grid>
+            <TreeView x:Name="MainTreeView" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Stretch" BorderBrush="Green">
+                <TreeViewItem IsExpanded="True" > <!-- bakulev ItemsSource="{Binding Departments}" -->
+                    <TreeViewItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Level 1 (Blue)" />
+                            <!--Image Source="/WpfTutorialSamples;component/Images/bullet_blue.png" /-->
+                            <TextBlock Text="Level 1 (Blue)" />
+                        </StackPanel>
+                    </TreeViewItem.Header>
+                    <TreeViewItem.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="-30,0,0,0" >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Key" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding HostUrl, StringFormat='{}{0}: '}" FontWeight="Bold"  />
+                                <TextBox Grid.Column="1" Text="{Binding HostUrl }" />
+                            </Grid>
+                        </DataTemplate>
+                    </TreeViewItem.ItemTemplate>
+                    <TreeViewItem.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </TreeViewItem.ItemsPanel>
+                </TreeViewItem>
+                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
+                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
+                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
+            </TreeView>
+            <Button HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="5"
+                    Template="{StaticResource infoButtonTemplate}" 
+                    Command="{Binding ShowDataChangeWindowCommand}" />
+        </Grid>
+    </DataTemplate>
+
+    <!-- DataTemplate for Popup look and feel -->
+    <DataTemplate DataType="{x:Type local:PersistDesignerItemData}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0"
+                   Content="HostUrl"
+                   Margin="5" />
+            <TextBox Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    Text="{Binding HostUrl}"
+                    Width="150"
+                    Margin="5" />
+        </Grid>
+    </DataTemplate>
+
+
+
+</ResourceDictionary>
