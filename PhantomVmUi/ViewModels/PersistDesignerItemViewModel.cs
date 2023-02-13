@@ -82,7 +82,7 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
             PersistDesignerItemData data = new PersistDesignerItemData(DescriptionText);
             if (visualiserService.ShowDialog(data) == true)
             {
-                //this.DescriptionText = data.DescriptionText;
+                this.DescriptionText = "data.DescriptionText";
             }
         }
 

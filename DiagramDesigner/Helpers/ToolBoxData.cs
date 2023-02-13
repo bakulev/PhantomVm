@@ -7,12 +7,12 @@ namespace DiagramDesigner.Helpers
 {
     public class ToolBoxData
     {
-        public string ImageUrl { get; private set; }
+        public string DescriptionText { get; private set; }
         public Type Type { get; private set; }
 
         public ToolBoxData(string imageUrl, Type type)
         {
-            this.ImageUrl = imageUrl;
+            this.DescriptionText = imageUrl;
             this.Type = type;
         }
     }

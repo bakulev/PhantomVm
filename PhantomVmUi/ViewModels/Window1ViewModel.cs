@@ -41,34 +41,60 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
             //ease if you wish just create a new IPathFinder class and pass it in right here
             ConnectorViewModel.PathFinder = new StraightPathFinder(); // bakulev new OrthogonalPathFinder();
 
+            double left = 30;
+            double top = 30;
+            foreach (var pvmObject in _pvmRoot.ObjList)
+            {
+                PersistDesignerItemViewModel item = new PersistDesignerItemViewModel();
+                item.DescriptionText = pvmObject.ToString();
+                item.Parent = DiagramViewModel;
+                item.Left = left;
+                item.Top = top;
+                item.ItemHeight = 100;
+                item.ItemWidth = 50 + pvmObject.ToString().Length * 5;
+                if (item.ItemWidth < 150) item.ItemWidth = 150;
+                if (pvmObject.Fields != null)
+                {
+                    foreach (var arr in pvmObject.Fields.Array)
+                    {
+                        item.Departments.Add(new Property("prop", arr.ToString()));
+                        item.ItemHeight += 50;
+                    }
+                }
+                DiagramViewModel.Items.Add(item);
 
+                left += 30;
+                top += 30;
+            }
 
-            SettingsDesignerItemViewModel item1 = new SettingsDesignerItemViewModel();
-            item1.Parent = DiagramViewModel;
-            item1.Left = 100;
-            item1.Top = 100;
-            DiagramViewModel.Items.Add(item1);
+            if (false)
+            {
+                SettingsDesignerItemViewModel item1 = new SettingsDesignerItemViewModel();
+                item1.Parent = DiagramViewModel;
+                item1.Left = 100;
+                item1.Top = 100;
+                DiagramViewModel.Items.Add(item1);
 
-            PersistDesignerItemViewModel item2 = new PersistDesignerItemViewModel();
-            item2.DescriptionText = "Descr 2";
-            item2.Parent = DiagramViewModel;
-            item2.Left = 300;
-            item2.Top = 300;
-            item2.ItemHeight = 200;
-            item2.ItemWidth = 250;
-            DiagramViewModel.Items.Add(item2);
+                PersistDesignerItemViewModel item2 = new PersistDesignerItemViewModel();
+                item2.DescriptionText = "Descr 2";
+                item2.Parent = DiagramViewModel;
+                item2.Left = 300;
+                item2.Top = 300;
+                item2.ItemHeight = 200;
+                item2.ItemWidth = 250;
+                DiagramViewModel.Items.Add(item2);
 
-            PersistDesignerItemViewModel item3 = new PersistDesignerItemViewModel();
-            item3.DescriptionText = "Descr 3";
-            item3.Parent = DiagramViewModel;
-            item3.Left = 400;
-            item3.Top = 400;
-            DiagramViewModel.Items.Add(item3);
+                PersistDesignerItemViewModel item3 = new PersistDesignerItemViewModel();
+                item3.DescriptionText = "Descr 3";
+                item3.Parent = DiagramViewModel;
+                item3.Left = 400;
+                item3.Top = 400;
+                DiagramViewModel.Items.Add(item3);
 
-            ConnectorViewModel con1 = new ConnectorViewModel(item1.RightConnector, item2.TopConnector);
-            con1.Parent = DiagramViewModel;
-            DiagramViewModel.Items.Add(con1);
-
+                ConnectorViewModel con1 = new ConnectorViewModel(item1.RightConnector, item2.TopConnector);
+                con1.Parent = DiagramViewModel;
+                DiagramViewModel.Items.Add(con1);
+            }
         }
 
 
