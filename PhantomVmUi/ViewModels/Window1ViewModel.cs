@@ -50,6 +50,7 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
             DiagramViewModel.Items.Add(item1);
 
             PersistDesignerItemViewModel item2 = new PersistDesignerItemViewModel();
+            item2.DescriptionText = "Descr 2";
             item2.Parent = DiagramViewModel;
             item2.Left = 300;
             item2.Top = 300;
@@ -58,6 +59,7 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
             DiagramViewModel.Items.Add(item2);
 
             PersistDesignerItemViewModel item3 = new PersistDesignerItemViewModel();
+            item3.DescriptionText = "Descr 3";
             item3.Parent = DiagramViewModel;
             item3.Left = 400;
             item3.Top = 400;

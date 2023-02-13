@@ -6,13 +6,17 @@
     <!-- DataTemplate for DesignerCanvas look and feel -->
     <DataTemplate DataType="{x:Type local:PersistDesignerItemViewModel}">
         <Grid>
-            <TreeView x:Name="MainTreeView" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Stretch" BorderBrush="Green">
-                <TreeViewItem IsExpanded="True" > <!-- bakulev ItemsSource="{Binding Departments}" -->
+            <TreeView x:Name="MainTreeView"  Height="{Binding ContentWitdh, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment = "Stretch"
+                Margin = "5"
+                BorderBrush = "Transparent">
+                
+                <TreeViewItem IsExpanded="True" ItemsSource="{Binding Departments}" >
                     <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Level 1 (Blue)" />
-                            <!--Image Source="/WpfTutorialSamples;component/Images/bullet_blue.png" /-->
-                            <TextBlock Text="Level 1 (Blue)" />
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="{Binding DescriptionText}" />
+                            <TextBlock Text="Level 1 (Blue)" Foreground="Blue"/>
                         </StackPanel>
                     </TreeViewItem.Header>
                     <TreeViewItem.ItemTemplate>
@@ -22,20 +26,12 @@
                                     <ColumnDefinition Width="Auto" SharedSizeGroup="Key" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding HostUrl, StringFormat='{}{0}: '}" FontWeight="Bold"  />
-                                <TextBox Grid.Column="1" Text="{Binding HostUrl }" />
+                                <TextBlock Grid.Column="0" Text="{Binding PropertyName, StringFormat='{}{0}: '}" FontWeight="Bold" />
+                                <TextBox Grid.Column="1" Text="{Binding PropertyValue}" />
                             </Grid>
                         </DataTemplate>
                     </TreeViewItem.ItemTemplate>
-                    <TreeViewItem.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel />
-                        </ItemsPanelTemplate>
-                    </TreeViewItem.ItemsPanel>
                 </TreeViewItem>
-                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
-                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
-                <TreeViewItem><TextBlock>asdfasdf</TextBlock></TreeViewItem>
             </TreeView>
             <Button HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
