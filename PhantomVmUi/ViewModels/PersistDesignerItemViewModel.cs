@@ -70,9 +70,6 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
             Init();
         }
 
-
-        public String DescriptionText { get; set; }
-
         public ObservableCollection<Property> Departments { get; set; } = new ObservableCollection<Property>();
 
         public ICommand ShowDataChangeWindowCommand { get; private set; }

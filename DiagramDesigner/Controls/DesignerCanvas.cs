@@ -194,13 +194,14 @@ namespace DiagramDesigner
             DragObject dragObject = e.Data.GetData(typeof(DragObject)) as DragObject;
             if (dragObject != null)
             {
-
+                string name = dragObject.DescriptionText;
                 (DataContext as IDiagramViewModel).ClearSelectedItemsCommand.Execute(null);
                 Point position = e.GetPosition(this);
                 DesignerItemViewModelBase itemBase = (DesignerItemViewModelBase)Activator.CreateInstance(dragObject.ContentType);
                 itemBase.Left = Math.Max(0, position.X - itemBase.ItemWidth / 2);
                 itemBase.Top = Math.Max(0, position.Y - itemBase.ItemHeight / 2);
                 itemBase.IsSelected = true;
+                itemBase.DescriptionText = name;
                 (DataContext as IDiagramViewModel).AddItemCommand.Execute(itemBase);
             }
             e.Handled = true;

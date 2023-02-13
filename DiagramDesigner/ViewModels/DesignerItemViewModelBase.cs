@@ -41,6 +41,23 @@ namespace DiagramDesigner
             Init();
         }
 
+        private string _descriptionText;
+        public string DescriptionText
+        {
+            get
+            {
+                return _descriptionText;
+            }
+            set
+            {
+                if (_descriptionText != value)
+                {
+                    _descriptionText = value;
+                    NotifyChanged("DescriptionText");
+                }
+            }
+        }
+
         public double ItemWidth
         {
             get

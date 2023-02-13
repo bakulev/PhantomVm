@@ -5,6 +5,7 @@ using DiagramDesigner;
 using System.Threading.Tasks;
 using System.Windows;
 using Cc.Anba.PhantomOs.VirtualMachine;
+using DiagramDesigner.Helpers;
 
 namespace Cc.Anba.PhantomOs.Apps.VmUi
 {
@@ -65,6 +66,8 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
 
                 left += 30;
                 top += 30;
+
+                ToolBoxViewModel.ToolBoxItems.Add(new ToolBoxData(pvmObject.ToString(), typeof(PersistDesignerItemViewModel)));
             }
 
             if (false)
