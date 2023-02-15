@@ -13,8 +13,10 @@
         <KeyBinding Key="Del"
                     Command="{Binding DeleteSelectedItemsCommand}" />
     </Window.InputBindings>
-	
-	<DockPanel Margin="0">
+    <Grid>
+        <TabControl>
+            <TabItem Header="General">
+    <DockPanel Margin="0">
 		<ToolBar Height="35" DockPanel.Dock="Top">
 			<Button ToolTip="New"
                     Content="New"
@@ -71,6 +73,11 @@
                                   DataContext="{Binding DiagramViewModel}"
                                   Margin="3,1,0,0" />
         </Grid>
-	</DockPanel>    
-	
+	</DockPanel>
+
+            </TabItem>
+            <TabItem Header="Security" />
+            <TabItem Header="Details" />
+        </TabControl>
+    </Grid>
 </Window>

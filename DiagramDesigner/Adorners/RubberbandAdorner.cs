@@ -66,7 +66,7 @@ namespace DiagramDesigner
             dc.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
 
             if (this.startPoint.HasValue && this.endPoint.HasValue)
-                dc.DrawRectangle(Brushes.Transparent, rubberbandPen, new Rect(this.startPoint.Value, this.endPoint.Value));
+                dc.DrawRectangle(Brushes.Red, rubberbandPen, new Rect(this.startPoint.Value, this.endPoint.Value));
         }
 
 

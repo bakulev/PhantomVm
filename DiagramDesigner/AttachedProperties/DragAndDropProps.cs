@@ -75,6 +75,7 @@ namespace DiagramDesigner
             if (dragStartPoint.HasValue)
             {
                 DragObject dataObject = new DragObject();
+                dataObject.DescriptionText = (((FrameworkElement)sender).DataContext as ToolBoxData).DescriptionText;
                 dataObject.ContentType = (((FrameworkElement)sender).DataContext as ToolBoxData).Type;
                 dataObject.DesiredSize = new Size(65, 65);
                 DragDrop.DoDragDrop((DependencyObject)sender, dataObject, DragDropEffects.Copy);
