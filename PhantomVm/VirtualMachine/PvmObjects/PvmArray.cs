@@ -46,7 +46,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
             return Array[ordinal];
         }
 
-        internal void SetOrdinal(int ordinal, T value)
+        public void SetOrdinal(int ordinal, T value)
         {
             if (Array.Count <= ordinal)
                 for (int i = Array.Count; i <= ordinal; i++)

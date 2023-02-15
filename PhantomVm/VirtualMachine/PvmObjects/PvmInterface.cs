@@ -42,12 +42,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         #region Methods
 
-        internal PvmCode GetMethod(int method)
+        public PvmCode GetMethod(int method)
         {
             return Methods[method];
         }
 
-        internal void SetOrdinal(int i, PvmCode pvmCode)
+        public void SetOrdinal(int i, PvmCode pvmCode)
         {
             Methods[i] = pvmCode;
         }

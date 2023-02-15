@@ -48,6 +48,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\LoadPvmClass.cs" />
     <Compile Include="VirtualMachine\OpCodes.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmArray.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmClass.cs" />

@@ -123,7 +123,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return _nullObject;
         }
 
-        internal PvmClass NewClass(PvmString name,
+        public PvmClass NewClass(PvmString name,
             PvmClass parent, PvmInterface ifaceDefault)
         {
             if (_classClass == null)
@@ -134,7 +134,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmClass;
         }
 
-        internal PvmClass NewClass(PvmString name,
+        public PvmClass NewClass(PvmString name,
             PvmClass parent, PvmInterface ifaceDefault,
             PvmArray<PvmString> methodNames,
             PvmArray<PvmString> fieldNames)
@@ -153,7 +153,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
         /// </summary>
         /// <param name="nMethods"></param>
         /// <returns></returns>
-        internal PvmInterface NewInterface(int nMethods)
+        public PvmInterface NewInterface(int nMethods)
         {
             if (_interfaceClass == null)
                 throw new NullReferenceException();
@@ -163,7 +163,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmInterface;
         }
 
-        internal PvmInterface NewInterface(PvmClass baseClass)
+        public PvmInterface NewInterface(PvmClass baseClass)
         {
             if (_interfaceClass == null)
                 throw new NullReferenceException();
@@ -185,7 +185,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmObject;
         }
 
-        internal PvmCode NewCode(OpCode[] code)
+        public PvmCode NewCode(OpCode[] code)
         {
             if (_codeClass == null)
                 throw new NullReferenceException();
@@ -203,7 +203,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmInt;
         }
 
-        internal PvmString NewString(string str)
+        public PvmString NewString(string str)
         {
             if (_stringClass == null)
                 throw new NullReferenceException();
@@ -212,7 +212,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmString;
         }
 
-        internal PvmArray<PvmObject> NewArrayObject(int nSlots)
+        public PvmArray<PvmObject> NewArrayObject(int nSlots)
         {
             if (_arrayClass == null)
                 throw new NullReferenceException();
@@ -222,7 +222,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmArray;
         }
 
-        internal PvmArray<PvmString> NewArrayString(int nSlots)
+        public PvmArray<PvmString> NewArrayString(int nSlots)
         {
             if (_arrayClass == null)
                 throw new NullReferenceException();
@@ -231,14 +231,30 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmArray;
         }
 
-        internal PvmClass GetClassByName(string className)
+        public PvmClass GetClassByName(string className)
         {
             switch (className)
             {
-                case ".internal.object":
+                case ".internal.void":
                     return _nullClass;
+                case ".internal.object":
+                    return _classClass;
+                case ".internal.class": 
+                    return _classClass;
+                case ".internal.interface":
+                    return _interfaceClass;
+                case ".internal.string":
+                    return _stringClass;
+                case ".internal.code":
+                    return _codeClass;
+                case ".internal.int":
+                    return _intClass;
+                case ".internal.container.array":
+                    return _arrayClass;
+                default:
+                    throw new NotImplementedException();
             }
-            return _nullClass;
+            //return _nullClass;
         }
 
         #endregion

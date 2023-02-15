@@ -5,6 +5,7 @@ using DiagramDesigner;
 using System.Threading.Tasks;
 using System.Windows;
 using Cc.Anba.PhantomOs.VirtualMachine;
+using Cc.Anba.PhantomOs.VirtualMachine.Utils;
 
 namespace Cc.Anba.PhantomOs.Apps.VmUi
 {
@@ -25,6 +26,7 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
 
             _pvmRoot = new PvmRoot();
 
+            LoadPvmClass.Load(_pvmRoot, @"..\..\..\PhantomVm\Classes\ru.dz.phantom.system.boot.pc");
 
             messageBoxService = ApplicationServicesProvider.Instance.Provider.MessageBoxService;
 
