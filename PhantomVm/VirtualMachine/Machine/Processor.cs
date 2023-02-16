@@ -573,10 +573,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                     LISTI("d-isum");
                     {
                         //DOUBLE_STACK_OP(+);
-                        Int64 a1 = thread.iStack.Pop(); // ls_pop();
-                        Int64 a2 = thread.iStack.Pop(); // ls_pop();
+                        Int64 a1 = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 a2 = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)a1 + (Int32)a2;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -584,10 +584,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                     LISTI("d-imul");
                     {
                         //DOUBLE_STACK_OP(*);
-                        Int64 a1 = thread.iStack.Pop(); // ls_pop();
-                        Int64 a2 = thread.iStack.Pop(); // ls_pop();
+                        Int64 a1 = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 a2 = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)a1 * (Int32)a2;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -598,10 +598,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         //int64_t l = ls_pop();
                         //double r = AS_DOUBLE(u, l, -);
                         //ls_push(TO_LONG(r));
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)u - (Int32)l;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -613,10 +613,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         double r = AS_DOUBLE(l, u, -);
                         ls_push(TO_LONG(r));
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)l - (Int32)u;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -628,10 +628,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         double r = AS_DOUBLE(u, l, / );
                         ls_push(TO_LONG(r));
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)u / (Int32)l;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -643,10 +643,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         double r = AS_DOUBLE(l, u, / );
                         ls_push(TO_LONG(r));
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = (Int32)l / (Int32)u;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -659,12 +659,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         int r = AS_DOUBLE(l, u, >= );
                         is_push(r);
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = 0;
                         if ((Int32)u >= (Int32)l) r = 1;
                         if ((Int32)u <= (Int32)l) r = -1;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -676,12 +676,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         int r = AS_DOUBLE(l, u, <= );
                         is_push(r);
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = 0;
                         if ((Int32)u <= (Int32)l) r = 1;
                         if ((Int32)u >= (Int32)l) r = -1;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -693,12 +693,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         int r = AS_DOUBLE(l, u, >);
                         is_push(r);
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = 0;
                         if ((Int32)u > (Int32)l) r = 1;
                         if ((Int32)u < (Int32)l) r = -1;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -710,12 +710,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         int r = AS_DOUBLE(l, u, <);
                         is_push(r);
                     */
-                        Int64 u = thread.iStack.Pop(); // ls_pop();
-                        Int64 l = thread.iStack.Pop(); // ls_pop();
+                        Int64 u = thread.callFrame.iStack.Pop(); // ls_pop();
+                        Int64 l = thread.callFrame.iStack.Pop(); // ls_pop();
                         Int32 r = 0;
                         if ((Int32)u < (Int32)l) r = 1;
                         if ((Int32)u > (Int32)l) r = -1;
-                        thread.iStack.Push(r); // ls_push((Int64)r);
+                        thread.callFrame.iStack.Push(r); // ls_push((Int64)r);
                     }
                     break;
 
@@ -974,10 +974,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 				        */
                         var ip = thread.ip;
                         Debug.Write(string.Format("isublu @ {0:d}", ip - 1));
-                        Int32 u = (Int32)thread.iStack.Pop();
-                        Int32 l = (Int32)thread.iStack.Pop();
+                        Int32 u = (Int32)thread.callFrame.iStack.Pop();
+                        Int32 l = (Int32)thread.callFrame.iStack.Pop();
                         Int32 r = l - u;
-                        thread.iStack.Push(r);
+                        thread.callFrame.iStack.Push(r);
                         Debug.WriteLine(" // pop u={0:d}, pop l={1:d}, push l-u={2:d}", u, l, r);
                     }
                     break;
@@ -1120,8 +1120,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         /*
                         os_push(pvm_get_null_object()); // so what OpCode.os_push_null is for then?
                         */
-                        var i = thread.iStack.Pop();
-                        thread.oStack.Push(_root.NewInt((int)i));
+                        var i = thread.callFrame.iStack.Pop();
+                        thread.callFrame.oStack.Push(_root.NewInt((int)i));
                     }
                     break;
 
@@ -1331,7 +1331,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         var bin = thread.code.GetString(thread.ip);
                         thread.ip += 4 + (uint)bin.Length;
                         var o = _root.NewString(bin);
-                        thread.oStack.Push(o);
+                        thread.callFrame.oStack.Push(o);
                     }
                     break;
 
@@ -1513,9 +1513,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             var ip = thread.ip;
             if (isLong)
-                thread.iStack.Push(1);
+                thread.callFrame.iStack.Push(1);
             else
-                thread.iStack.Push(1);
+                thread.callFrame.iStack.Push(1);
             Debug.WriteLine("iconst 0 @ {1:d}", ip);
         }
         /// <summary>
@@ -1531,9 +1531,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             var ip = thread.ip;
             if (isLong)
-                thread.iStack.Push(1);
+                thread.callFrame.iStack.Push(1);
             else
-                thread.iStack.Push(1);
+                thread.callFrame.iStack.Push(1);
             Debug.WriteLine("iconst 1 @ {1:d}", ip);
         }
         /// <summary>
@@ -1553,9 +1553,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             var ip = thread.ip;
             Byte v = thread.CodeGetByte();
             if (isLong)
-                thread.iStack.Push((Int64)v);
+                thread.callFrame.iStack.Push((Int64)v);
             else
-                thread.iStack.Push(v);
+                thread.callFrame.iStack.Push(v);
             Debug.WriteLine("iconst8 {0:d} @ {1:d}", v, ip);
         }
         /// <summary>
@@ -1575,9 +1575,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             var ip = thread.ip;
             Int32 v = thread.CodeGetInt32();
             if (isLong)
-                thread.iStack.Push((Int64)v);
+                thread.callFrame.iStack.Push((Int64)v);
             else
-                thread.iStack.Push(v);
+                thread.callFrame.iStack.Push(v);
             Debug.WriteLine("iconst32 {0:d} @ {1:d}", v, ip - 1);
         }
         /// <summary>
@@ -1594,7 +1594,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             var ip = thread.ip;
             Int64 v = thread.CodeGetInt64();
-            thread.iStack.Push((Int64)v);
+            thread.callFrame.iStack.Push((Int64)v);
             Debug.WriteLine("iconst64 {0:d} @ {1:d}", v, ip);
         }
         // const_pool 
@@ -1668,7 +1668,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             Int32 jump = thread.CodeGetInt32();
             Debug.Write(string.Format("jz {0:d} @ {1:d}", jump, ip - 1));
             // (int) to make it signed to get bidirectional displacement
-            var test = thread.iStack.Pop();
+            var test = thread.callFrame.iStack.Pop();
             if (test == 0)
                 thread.ip = (uint)((int)ip + jump);
             Debug.WriteLine(" // pop test={0:d} == 0 -> (@{1:d})", test, thread.ip);
@@ -1735,10 +1735,10 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             if (ret == null)
                 throw new Exception("exit thread");
             var returnVal = _root.NewNull();
-            _root.RefDec(thread.callFrame);
+            //_root.RefDec(thread.callFrame);
             thread.callFrame = ret;
-            thread.PvmExecLoadFastAcc();
-            thread.oStack.Push(returnVal);
+            //thread.PvmExecLoadFastAcc();
+            thread.callFrame.oStack.Push(returnVal);
         }
         // push catcher label 
         //   summon “internal.class.string”;
@@ -1777,7 +1777,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             UInt32 addr = thread.CodeGetUInt32();
             Debug.WriteLine("push catcher {0:d} @ {1:d}", addr, ip - 1);
             var eh = new Tuple<PvmObject, uint>(null, addr); //TODO what object ?
-            thread.eStack.Push(eh);
+            thread.callFrame.eStack.Push(eh);
         }
         // pop catcher
         //   pop catcher;
@@ -1832,7 +1832,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             os_push(pvm_get_null_object()); // so what OpCode.os_push_null is for then?
             */
-            thread.oStack.Push(_root.NewNull());
+            thread.callFrame.oStack.Push(_root.NewNull());
         }
 
         // summon thread  
@@ -1849,8 +1849,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             os_push(ref_inc_o(current_thread));
 			//printf("ERROR: summon thread");
             */
-            thread.oStack.Push(thread);
-            _root.RefInc(thread);
+            thread.callFrame.oStack.Push(thread);
+            //_root.RefInc(thread);
             Debug.WriteLine("ERROR: summon thread");
         }
 
@@ -1868,8 +1868,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             os_push(ref_inc_o(this_object()));
             */
-            thread.oStack.Push(thread.thisObject);
-            _root.RefInc(thread.thisObject);
+            thread.callFrame.oStack.Push(thread.callFrame.thisObject);
+            //_root.RefInc(thread.callFrame.thisObject);
         }
 
         /// <summary>
@@ -1885,7 +1885,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             // locked refcnt
             os_push(pvm_get_string_class());
             */
-            thread.oStack.Push(_root.stringClass);
+            thread.callFrame.oStack.Push(_root.stringClass);
         }
 
         private void OpCodeDynamicInvoke(PvmThread thread)
@@ -1936,8 +1936,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             pvm_object_t o = pvm_ostack_top(da->_ostack);
             os_push(ref_inc_o(o));
             */
-            var o = thread.oStack.GetTop();
-            thread.oStack.Push(o);
+            var o = thread.callFrame.oStack.GetTop();
+            thread.callFrame.oStack.Push(o);
         }
 
         private void OpCodeOsDrop(PvmThread thread)
@@ -1946,7 +1946,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             ref_dec_o(os_pop()); 
             */
-            var val = thread.oStack.Pop();
+            var val = thread.callFrame.oStack.Pop();
         }
 
         private void OpCodeOsPull32(PvmThread thread)
@@ -1965,9 +1965,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             Byte i = thread.CodeGetByte();
             Debug.WriteLine("os load {0:d}", i);
-            var o = thread.thisObject.fields.GetOrdinal(i);
-            _root.RefInc(o);
-            thread.oStack.Push(o);
+            var o = thread.callFrame.thisObject.Fields.GetOrdinal(i);
+            //_root.RefInc(o);
+            thread.callFrame.oStack.Push(o);
         }
 
         private void OpCodeOsLoad32(PvmThread thread)
@@ -1977,9 +1977,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             Byte i = thread.CodeGetByte();
             Debug.WriteLine("os load {0:d}", i);
-            var o = thread.thisObject.fields.GetOrdinal(i);
-            _root.RefInc(o);
-            thread.oStack.Push(o);
+            var o = thread.callFrame.thisObject.Fields.GetOrdinal(i);
+            //_root.RefInc(o);
+            thread.callFrame.oStack.Push(o);
         }
 
         private void OpCodeOsSave8(PvmThread thread)
@@ -1989,8 +1989,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             */
             Byte i = thread.CodeGetByte();
             Debug.WriteLine("os save {0:d}", i);
-            var o = thread.oStack.Pop();
-            thread.thisObject.fields.SetOrdinal(i, o);
+            var o = thread.callFrame.oStack.Pop();
+            thread.callFrame.thisObject.Fields.SetOrdinal(i, o);
         }
 
         private void OpCodeOsSave32(PvmThread thread)
@@ -2022,9 +2022,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             var ip = thread.ip;
             UInt32 pos = thread.CodeGetUInt32();
             Debug.WriteLine("os stack get {1:d} @ {0:d} // push o", ip - 1, pos);
-            var o = thread.oStack.GetPos(pos);
-            _root.RefInc(o);
-            thread.oStack.Push(o);
+            var o = thread.callFrame.oStack.GetPos(pos);
+            //_root.RefInc(o);
+            thread.callFrame.oStack.Push(o);
         }
 
         private void OpCodeOsSet32(PvmThread thread)
@@ -2074,8 +2074,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         {
             var ip = thread.ip; ;
             Debug.WriteLine("sys {0:d} @ {2:d}", sysIndex, ip);
-            thread.thisObject.SysCall(
-                sysIndex, thread.thisObject, thread);
+            thread.callFrame.thisObject.SysCall(
+                sysIndex, thread.callFrame.thisObject, thread);
             //sys_sleep:
 #if OLD_VM_SLEEP
 			// Only sys can put thread asleep
@@ -2102,8 +2102,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             var ip = thread.ip; ;
             var sysIndex = thread.CodeGetByte();
             Debug.WriteLine("sys {1:d} @ {0:d}", ip - 1, sysIndex);
-            thread.thisObject.SysCall(
-                sysIndex, thread.thisObject, thread);
+            thread.callFrame.thisObject.SysCall(
+                sysIndex, thread.callFrame.thisObject, thread);
         }
 
         // call methodIndex numberOfArgs 
@@ -2125,7 +2125,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             var nArgs = thread.CodeGetByte();
             Debug.WriteLine("call {0:d} {1:d} @ {2:d}", callIndex, nArgs, ip - 1);
             //no optimization for soon return
-            ExecCall(thread, callIndex, nArgs, false, thread.thisObject); // _root.NewNull());
+            ExecCall(thread, callIndex, nArgs, false, thread.callFrame.thisObject); // _root.NewNull());
         }
 
         /// <summary>
@@ -2170,30 +2170,30 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             bool isOptimize, PvmObject thisObject)
         {
             Debug.WriteLine(" exec call {0:d} (stack_depth {1:d} -> ", callIndex, 1);
-            thread.PvmExecSaveFastAcc();
+            //thread.PvmExecSaveFastAcc();
 
             // Find start method
-            var code = thisObject.iface.GetMethod((int)callIndex);
+            var code = thisObject.Iface.GetMethod((int)callIndex);
 
             // Create call frame
             var newCf = _root.NewCallFrame(thisObject);
             newCf.ip = 0;
-            newCf.ipMax = (uint)code.code.GetLength(0); // code_size
+            newCf.ipMax = (uint)code.Code.GetLength(0); // code_size
             newCf.code = code;
             newCf.thisObject = thisObject;
-            _root.RefInc(thisObject);
+            //_root.RefInc(thisObject);
 
             // Prepare argiments
             for (uint i = nParams; i > 0; i--)
             {
-                var o = thread.oStack.Pop();
+                var o = thread.callFrame.oStack.Pop();
                 newCf.oStack.Push(o);
             }
             newCf.iStack.Push(nParams);
 
             newCf.prev = thread.callFrame; // For ret able to return previous call frame.
             thread.callFrame = newCf; // Swith to new call frame
-            thread.PvmExecLoadFastAcc();
+            //thread.PvmExecLoadFastAcc();
         }
 
         private static void LISTI(string str)

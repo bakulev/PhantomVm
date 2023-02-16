@@ -60,6 +60,7 @@
     <Compile Include="VirtualMachine\PvmObjects\PvmInterface.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmNull.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmObject.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmStack.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmString.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmThread.cs" />
     <Compile Include="VirtualMachine\PvmRoot.cs" />

@@ -15,6 +15,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
         private PvmClass _intClass;
         private PvmClass _stringClass;
         private PvmClass _arrayClass;
+        private PvmClass _iStackClass;
+        private PvmClass _oStackClass;
+        private PvmClass _eStackClass;
         private PvmClass _callFrameClass;
         private PvmClass _threadClass;
         private PvmClass _bootClass;
@@ -234,14 +237,41 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmArray;
         }
 
+        internal PvmStack<Int64> NewStackInt64()
+        {
+            if (_iStackClass == null)
+                throw new NullReferenceException();
+            var pvmStack = new PvmStack<Int64>(_iStackClass);
+            ObjList.Add(pvmStack);
+            return pvmStack;
+        }
+
+        internal PvmStack<PvmObject> NewStackObject()
+        {
+            if (_oStackClass == null)
+                throw new NullReferenceException();
+            var pvmStack = new PvmStack<PvmObject>(_oStackClass);
+            ObjList.Add(pvmStack);
+            return pvmStack;
+        }
+
+        internal PvmStack<Tuple<PvmObject, uint>> NewStackException()
+        {
+            if (_eStackClass == null)
+                throw new NullReferenceException();
+            var pvmStack = new PvmStack<Tuple<PvmObject, uint>>(_eStackClass);
+            ObjList.Add(pvmStack);
+            return pvmStack;
+        }
+
         public PvmCallFrame NewCallFrame(PvmObject thisObject, int method, PvmObject[] args)
         {
             if (_callFrameClass == null)
                 throw new NullReferenceException();
-            //var iStack = NewStackInt64();
-            //var oStack = NewStackObject();
-            //var eStack = NewStackException();
-            var pvmCallFrame = new PvmCallFrame(_callFrameClass); //, iStack, oStack, eStack);
+            var iStack = NewStackInt64();
+            var oStack = NewStackObject();
+            var eStack = NewStackException();
+            var pvmCallFrame = new PvmCallFrame(_callFrameClass, iStack, oStack, eStack);
             ObjList.Add(pvmCallFrame);
 
             // Find start method

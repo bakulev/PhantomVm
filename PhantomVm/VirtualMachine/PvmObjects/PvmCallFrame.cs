@@ -9,9 +9,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 {
     public class PvmCallFrame : PvmObject
     {
-        //public PvmStack<Int64> iStack; // integer (fast calc) stack
-        //public PvmStack<PvmObject> oStack;   // main object stack
-        //public PvmStack<Tuple<PvmObject, uint>> eStack;   // exception catchers
+        public PvmStack<Int64> iStack; // integer (fast calc) stack
+        public PvmStack<PvmObject> oStack;   // main object stack
+        public PvmStack<Tuple<PvmObject, uint>> eStack;   // exception catchers
 
         public uint ipMax;    // size of code in bytes
         public PvmCode code;    // (byte)code itself
@@ -20,9 +20,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
         public PvmCallFrame prev; // where to return!
         int ordinal;    // num of method we run
 
-        public PvmCallFrame(PvmClass objectClass
-            //PvmStack<Int64> iStack, PvmStack<PvmObject> oStack,
-            //PvmStack<Tuple<PvmObject, uint>> eStack
+        public PvmCallFrame(PvmClass objectClass,
+            PvmStack<Int64> iStack, PvmStack<PvmObject> oStack,
+            PvmStack<Tuple<PvmObject, uint>> eStack
             )
             : base(objectClass)
         {
@@ -30,9 +30,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
             this.Iface = objectClass.IfaceDefault;
 
             // Fill desired fields. 
-            //this.iStack = iStack;
-            //this.oStack = oStack;
-            //this.eStack = eStack;
+            this.iStack = iStack;
+            this.oStack = oStack;
+            this.eStack = eStack;
         }
 
         public override string ToString() => "PvmCallFrame";
