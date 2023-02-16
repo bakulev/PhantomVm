@@ -73,6 +73,7 @@
     <Compile Include="UserControls\ToolBoxControl.xaml.cs">
       <DependentUpon>ToolBoxControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils\VmSystemInterface.cs" />
     <Compile Include="ViewModels\GroupingDesignerItemViewModel.cs" />
     <Compile Include="ViewModels\ToolBoxViewModel.cs" />
     <Compile Include="ViewModels\SettingsDesignerItemData.cs" />
@@ -159,9 +160,7 @@
   <ItemGroup>
     <Resource Include="Images\Setting.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utils\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

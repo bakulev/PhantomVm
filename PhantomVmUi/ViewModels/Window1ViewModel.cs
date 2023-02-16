@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using DiagramDesigner;
-using System.Threading.Tasks;
 using System.Windows;
-using Cc.Anba.PhantomOs.VirtualMachine;
-using Cc.Anba.PhantomOs.VirtualMachine.Utils;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using DiagramDesigner;
 using DiagramDesigner.Helpers;
+using Cc.Anba.PhantomOs.VirtualMachine;
+using Cc.Anba.PhantomOs.VirtualMachine.Machine;
+using System.Diagnostics;
+using Cc.Anba.PhantomOs.Apps.VmUi.Utils;
 
 namespace Cc.Anba.PhantomOs.Apps.VmUi
 {
@@ -21,13 +23,55 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
         private bool isBusy = false;
 
         private PvmRoot _pvmRoot;
+        private Processor _processor;
 
         public Window1ViewModel()
         {
-
+            // It is a memory of VirtualMachine
             _pvmRoot = new PvmRoot();
+            // It is a processing unit of a VirtualMachine
+            // Can not make it static because it contains an internal states: prefix_long, prefix_float and prefix_double.
+            _processor = new Processor();
+            // System interface from VM to an actual machine.
+            var systemInterface = new VmSystemInterface();
 
-            LoadPvmClass.Load(_pvmRoot, @"..\..\..\PhantomVm\Classes\ru.dz.phantom.system.boot.pc");
+            // External helper loads a class from a file into a VM memory. TODO Should be referenced from systemBoot object.
+            var userBootClass = systemInterface.LoadPvmClass(_pvmRoot, @"..\..\..\PhantomVm\Classes\ru.dz.phantom.system.boot.pc");
+            // Create an object of the loaded class.
+            var userBootObject = _pvmRoot.NewObject(userBootClass); 
+
+            // Creates new system boot class desired for userBoot as arg.
+            // Boot objects is actually an interface from VM to a physcial machine.
+            // It converts method calls to system calls that are allowed to interact with a pysical machine.
+            var systemBoot = _pvmRoot.NewBoot(systemInterface); // instead of new PvmBoot();
+            var args = new VirtualMachine.PvmObjects.PvmObject[1] { systemBoot };
+
+            // Create in a memory objects that is desired for processor performing execution.
+            var callFrame = _pvmRoot.NewCallFrame(userBootObject, 8, args); // Start from method #8 with specified args.
+            var thread = _pvmRoot.NewThread(callFrame);
+
+            // add to system threads list
+            //_pvmRoot.threadsList.Add(thread);
+            // not for each and every one
+
+            //TODO get thread from a threads list and execute according to a scheduller.
+            while (thread != null)
+            {
+                // There are a lot of threads possible. Which to make step is decided by sheduler.
+                _processor.MakeStep(_pvmRoot, thread);
+
+                //TODO insert an exit from this infinite cycle.
+            }
+
+            // When callFrame completed and thread is not needed more.
+            // Get result
+            //var ret = callFrame.oStack.Pop();
+
+            // the thread was decr once... while executing class loader code... TODO: should be rewritten!
+            //thread.Release();
+            // remove from system threads list.
+            //_pvmRoot.threadsList.Remove(thread);
+
 
             messageBoxService = ApplicationServicesProvider.Instance.Provider.MessageBoxService;
 

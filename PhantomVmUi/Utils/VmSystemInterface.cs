@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Cc.Anba.PhantomOs.VirtualMachine;
+using Cc.Anba.PhantomOs.VirtualMachine.PvmObjects;
 using System.IO;
 using System.Text;
-using Cc.Anba.PhantomOs.VirtualMachine.PvmObjects;
+using System;
 
-namespace Cc.Anba.PhantomOs.VirtualMachine.Utils
+namespace Cc.Anba.PhantomOs.Apps.VmUi.Utils
 {
-    public class LoadPvmClass
+    public class VmSystemInterface : IPvmBoot
     {
-        public static PvmClass Load(PvmRoot root, string filePath)
+        public PvmClass LoadPvmClass(PvmRoot root, string filePath)
         {
             PvmString className = null;
             PvmInterface iface = null;
@@ -189,6 +190,11 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Utils
             Int32 ret = BitConverter.ToInt32(data, 0);
             //code->IP += int_size();
             return ret;
+        }
+
+        public void Print()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

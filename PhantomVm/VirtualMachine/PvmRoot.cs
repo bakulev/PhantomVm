@@ -15,6 +15,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
         private PvmClass _intClass;
         private PvmClass _stringClass;
         private PvmClass _arrayClass;
+        private PvmClass _callFrameClass;
+        private PvmClass _threadClass;
+        private PvmClass _bootClass;
 
         private PvmNull _nullObject;
 
@@ -173,7 +176,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             return pvmInterface;
         }
 
-        internal PvmObject NewObject(PvmClass objectClass)
+        public PvmObject NewObject(PvmClass objectClass)
         {
             if (objectClass == null)
                 throw new NullReferenceException();
@@ -229,6 +232,52 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             var pvmArray = new PvmArray<PvmString>(_arrayClass, nSlots);
             ObjList.Add(pvmArray);
             return pvmArray;
+        }
+
+        public PvmCallFrame NewCallFrame(PvmObject thisObject, int method, PvmObject[] args)
+        {
+            if (_callFrameClass == null)
+                throw new NullReferenceException();
+            //var iStack = NewStackInt64();
+            //var oStack = NewStackObject();
+            //var eStack = NewStackException();
+            var pvmCallFrame = new PvmCallFrame(_callFrameClass); //, iStack, oStack, eStack);
+            ObjList.Add(pvmCallFrame);
+
+            // Find start method
+            var code = thisObject.Iface.GetMethod(method);
+
+            pvmCallFrame.ip = 0;
+            pvmCallFrame.ipMax = (uint)code.Code.GetLength(0); // code_size
+            pvmCallFrame.code = code;
+            pvmCallFrame.thisObject = thisObject;
+
+            // Prepare argiments
+            for (int i = args.GetLength(0); i > 0; i--)
+            {
+                //pvmCallFrame.oStack.Push(args[i - 1]);
+            }
+            //pvmCallFrame.iStack.Push(args.GetLength(0));
+
+            return pvmCallFrame;
+        }
+
+        public PvmThread NewThread(PvmCallFrame callFrame)
+        {
+            if (_threadClass == null)
+                throw new NullReferenceException();
+            var pvmThread = new PvmThread(_threadClass, callFrame);
+            ObjList.Add(pvmThread);
+            return pvmThread;
+        }
+
+        public PvmBoot NewBoot(IPvmBoot systemInterface)
+        {
+            if (_bootClass == null)
+                throw new NullReferenceException();
+            var pvmBoot = new PvmBoot(_bootClass, systemInterface);
+            ObjList.Add(pvmBoot);
+            return pvmBoot;
         }
 
         public PvmClass GetClassByName(string className)

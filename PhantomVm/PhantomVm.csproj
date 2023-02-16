@@ -48,9 +48,12 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\LoadPvmClass.cs" />
+    <Compile Include="VirtualMachine\IPvmBoot.cs" />
+    <Compile Include="VirtualMachine\Machine\Processor.cs" />
     <Compile Include="VirtualMachine\OpCodes.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmArray.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmBoot.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmCallFrame.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmClass.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmCode.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmInt.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="VirtualMachine\PvmObjects\PvmNull.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmObject.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmString.cs" />
+    <Compile Include="VirtualMachine\PvmObjects\PvmThread.cs" />
     <Compile Include="VirtualMachine\PvmRoot.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +69,11 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
