@@ -117,6 +117,30 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             var arrayClass = NewClass(NewString(".internal.container.array"),
                 nullClass, sysInterfaceObject);
             _arrayClass = arrayClass;
+
+            var iStackClass = NewClass(NewString(".internal.istack"),
+                nullClass, sysInterfaceObject);
+            _iStackClass = iStackClass;
+
+            var oStackClass = NewClass(NewString(".internal.ostack"),
+                nullClass, sysInterfaceObject);
+            _oStackClass = oStackClass;
+
+            var eStackClass = NewClass(NewString(".internal.estack"),
+                nullClass, sysInterfaceObject);
+            _eStackClass = eStackClass;
+
+            var callFrameClass = NewClass(NewString(".internal.callframe"),
+                nullClass, sysInterfaceObject);
+            _callFrameClass = callFrameClass;
+
+            var threadClass = NewClass(NewString(".internal.thread"),
+                nullClass, sysInterfaceObject);
+            _threadClass = threadClass;
+
+            var bootClass = NewClass(NewString(".internal.bootstrap"),
+                nullClass, sysInterfaceObject);
+            _bootClass = arrayClass;
         }
 
         #endregion
@@ -282,12 +306,15 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
             pvmCallFrame.code = code;
             pvmCallFrame.thisObject = thisObject;
 
-            // Prepare argiments
-            for (int i = args.GetLength(0); i > 0; i--)
+            if (args != null)
             {
-                //pvmCallFrame.oStack.Push(args[i - 1]);
+                // Prepare argiments
+                for (int i = args.GetLength(0); i > 0; i--)
+                {
+                    pvmCallFrame.oStack.Push(args[i - 1]);
+                }
+                pvmCallFrame.iStack.Push(args.GetLength(0));
             }
-            //pvmCallFrame.iStack.Push(args.GetLength(0));
 
             return pvmCallFrame;
         }
@@ -330,6 +357,18 @@ namespace Cc.Anba.PhantomOs.VirtualMachine
                     return _intClass;
                 case ".internal.container.array":
                     return _arrayClass;
+                case ".internal.istack":
+                    return _iStackClass;
+                case ".internal.ostack":
+                    return _oStackClass;
+                case ".internal.estack":
+                    return _eStackClass;
+                case ".internal.callframe":
+                    return _callFrameClass;
+                case ".internal.thread":
+                    return _threadClass;
+                case ".internal.bootstrap":
+                    return _bootClass;
                 default:
                     throw new NotImplementedException();
             }

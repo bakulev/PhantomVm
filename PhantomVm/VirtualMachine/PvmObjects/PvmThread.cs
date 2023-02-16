@@ -4,10 +4,6 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 {
     public class PvmThread : PvmObject
     {
-        public PvmCode code;
-        public uint ip;   // Instruction Pointer 
-        public uint ipMax;
-
         public PvmCallFrame callFrame;   // current
 
         // misc data
@@ -29,9 +25,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         public OpCode CodeGetNext()
         {
-            if (ip < code.Code.GetLength(0))
+            if (callFrame.ip < callFrame.code.Code.GetLength(0))
             {
-                return code.Code[ip++];
+                return callFrame.code.Code[callFrame.ip++];
             }
             else
             {
@@ -41,9 +37,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         internal Byte CodeGetByte()
         {
-            if (ip + sizeof(Byte) < code.Code.GetLength(0))
+            if (callFrame.ip + sizeof(Byte) < callFrame.code.Code.GetLength(0))
             {
-                Byte data = (Byte)code.Code[ip++];
+                Byte data = (Byte)callFrame.code.Code[callFrame.ip++];
                 return data;
             }
             else
@@ -54,14 +50,14 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         internal Int32 CodeGetInt32()
         {
-            if (ip + sizeof(Int32) < code.Code.GetLength(0))
+            if (callFrame.ip + sizeof(Int32) < callFrame.code.Code.GetLength(0))
             {
                 var data = new byte[sizeof(Int32)];
                 for (int i = 0; i < sizeof(Int32); i++)
-                    data[i] = (byte)code.Code[ip + i];
+                    data[i] = (byte)callFrame.code.Code[callFrame.ip + i];
                 Array.Reverse(data);
                 Int32 ret = BitConverter.ToInt32(data, 0);
-                ip += sizeof(Int32);
+                callFrame.ip += sizeof(Int32);
                 return ret;
             }
             else
@@ -72,14 +68,14 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         internal UInt32 CodeGetUInt32()
         {
-            if (ip + sizeof(UInt32) < code.Code.GetLength(0))
+            if (callFrame.ip + sizeof(UInt32) < callFrame.code.Code.GetLength(0))
             {
                 var data = new byte[sizeof(UInt32)];
                 for (int i = 0; i < sizeof(UInt32); i++)
-                    data[i] = (byte)code.Code[ip + i];
+                    data[i] = (byte)callFrame.code.Code[callFrame.ip + i];
                 Array.Reverse(data);
                 UInt32 ret = BitConverter.ToUInt32(data, 0);
-                ip += sizeof(UInt32);
+                callFrame.ip += sizeof(UInt32);
                 return ret;
             }
             else
@@ -90,14 +86,14 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 
         internal Int64 CodeGetInt64()
         {
-            if (ip + sizeof(Int64) < code.Code.GetLength(0))
+            if (callFrame.ip + sizeof(Int64) < callFrame.code.Code.GetLength(0))
             {
                 var data = new byte[sizeof(Int64)];
                 for (int i = 0; i < sizeof(Int64); i++)
-                    data[i] = (byte)code.Code[ip + i];
+                    data[i] = (byte)callFrame.code.Code[callFrame.ip + i];
                 Array.Reverse(data);
                 Int64 ret = BitConverter.ToInt64(data, 0);
-                ip += sizeof(Int64);
+                callFrame.ip += sizeof(Int64);
                 return ret;
             }
             else

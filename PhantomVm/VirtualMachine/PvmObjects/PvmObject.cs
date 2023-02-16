@@ -1,4 +1,6 @@
 ﻿
+using System.Threading;
+
 namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 {
     /// <summary>
@@ -45,6 +47,15 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
         }
         public override string ToString() =>
             "PvmObject: " + " \"" + "\" of " + Class;
+
+        #endregion
+
+        #region Methods
+
+        virtual public void SysCall(PvmRoot root, int sysIndex, PvmObject thisObject, PvmThread thread)
+        {
+
+        }
 
         #endregion
     }

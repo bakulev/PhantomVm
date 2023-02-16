@@ -972,7 +972,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         int l = is_pop();
                         is_push(l - u);
 				        */
-                        var ip = thread.ip;
+                        var ip = thread.callFrame.ip;
                         Debug.Write(string.Format("isublu @ {0:d}", ip - 1));
                         Int32 u = (Int32)thread.callFrame.iStack.Pop();
                         Int32 l = (Int32)thread.callFrame.iStack.Pop();
@@ -1115,7 +1115,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                     {/*
                         os_push(pvm_create_int_object(is_pop()));
                     */
-                        var ip = thread.ip;
+                        var ip = thread.callFrame.ip;
                         Debug.WriteLine("i2o @ {0:d}", ip - 1);
                         /*
                         os_push(pvm_get_null_object()); // so what OpCode.os_push_null is for then?
@@ -1183,7 +1183,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 
                 // Put null object on stack. 
                 case OpCode.SummonNull:
-                    OpCodeSummonNull(thread);
+                    OpCodeSummonNull(_root, thread);
                     break;
                 // Puts current thread object reference on stack.
                 case OpCode.SummonThread:
@@ -1231,7 +1231,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                     break;
 
                 case OpCode.SummonStringClass:
-                    OpCodeSummonStringClass(thread);
+                    OpCodeSummonStringClass(_root, thread);
                     break;
 
                 case OpCode.SummonArrayClass:
@@ -1328,8 +1328,8 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                         /* 
                         os_push(pvm_code_get_string(&(da->code))); 
                         */
-                        var bin = thread.code.GetString(thread.ip);
-                        thread.ip += 4 + (uint)bin.Length;
+                        var bin = thread.callFrame.code.GetString(thread.callFrame.ip);
+                        thread.callFrame.ip += 4 + (uint)bin.Length;
                         var o = _root.NewString(bin);
                         thread.callFrame.oStack.Push(o);
                     }
@@ -1343,7 +1343,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                 case OpCode.Jz: OpCodeJz(thread); break;
                 case OpCode.Switch: OpCodeSwitch(thread); break;
 
-                case OpCode.Ret: OpCodeRet(thread); break;
+                case OpCode.Ret: OpCodeRet(_root, thread); break;
 
                 // exceptions are like ret ---------------------------------------------------
 
@@ -1375,64 +1375,64 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
                 case OpCode.IsGet32: OpCodeIsGet32(thread); break;
                 case OpCode.IsSet32: OpCodeIsSet32(thread); break;
 
-                case OpCode.Sys0: OpCodeSysX(thread, 0); break;
-                case OpCode.Sys1: OpCodeSysX(thread, 1); break;
-                case OpCode.Sys2: OpCodeSysX(thread, 2); break;
-                case OpCode.Sys3: OpCodeSysX(thread, 3); break;
-                case OpCode.Sys4: OpCodeSysX(thread, 4); break;
-                case OpCode.Sys5: OpCodeSysX(thread, 5); break;
-                case OpCode.Sys6: OpCodeSysX(thread, 6); break;
-                case OpCode.Sys7: OpCodeSysX(thread, 7); break;
-                case OpCode.Sys8: OpCodeSysX(thread, 8); break;
-                case OpCode.Sys9: OpCodeSysX(thread, 9); break;
-                case OpCode.SysA: OpCodeSysX(thread, 10); break;
-                case OpCode.SysB: OpCodeSysX(thread, 11); break;
-                case OpCode.SysC: OpCodeSysX(thread, 12); break;
-                case OpCode.SysD: OpCodeSysX(thread, 13); break;
-                case OpCode.SysE: OpCodeSysX(thread, 14); break;
-                case OpCode.SysF: OpCodeSysX(thread, 15); break;
-                case OpCode.Sys8Bit: OpCodeSys8Bit(thread); break;
+                case OpCode.Sys0: OpCodeSysX(_root, thread, 0); break;
+                case OpCode.Sys1: OpCodeSysX(_root, thread, 1); break;
+                case OpCode.Sys2: OpCodeSysX(_root, thread, 2); break;
+                case OpCode.Sys3: OpCodeSysX(_root, thread, 3); break;
+                case OpCode.Sys4: OpCodeSysX(_root, thread, 4); break;
+                case OpCode.Sys5: OpCodeSysX(_root, thread, 5); break;
+                case OpCode.Sys6: OpCodeSysX(_root, thread, 6); break;
+                case OpCode.Sys7: OpCodeSysX(_root, thread, 7); break;
+                case OpCode.Sys8: OpCodeSysX(_root, thread, 8); break;
+                case OpCode.Sys9: OpCodeSysX(_root, thread, 9); break;
+                case OpCode.SysA: OpCodeSysX(_root, thread, 10); break;
+                case OpCode.SysB: OpCodeSysX(_root, thread, 11); break;
+                case OpCode.SysC: OpCodeSysX(_root, thread, 12); break;
+                case OpCode.SysD: OpCodeSysX(_root, thread, 13); break;
+                case OpCode.SysE: OpCodeSysX(_root, thread, 14); break;
+                case OpCode.SysF: OpCodeSysX(_root, thread, 15); break;
+                case OpCode.Sys8Bit: OpCodeSys8Bit(_root, thread); break;
 
                 // these 4 are parameter-less calls!
-                case OpCode.ShortCall0: OpCodeCallXX(thread, 0); break;
-                case OpCode.ShortCall1: OpCodeCallXX(thread, 1); break;
-                case OpCode.ShortCall2: OpCodeCallXX(thread, 2); break;
+                case OpCode.ShortCall0: OpCodeCallXX(_root, thread, 0); break;
+                case OpCode.ShortCall1: OpCodeCallXX(_root, thread, 1); break;
+                case OpCode.ShortCall2: OpCodeCallXX(_root, thread, 2); break;
                 // pvm_exec_call(da, 3, 0, 1, pvm_get_null_object());
-                case OpCode.ShortCall3: OpCodeCallXX(thread, 3); break;
-                case OpCode.Call00: OpCodeCallXX(thread, 0); break;
-                case OpCode.Call01: OpCodeCallXX(thread, 1); break;
-                case OpCode.Call02: OpCodeCallXX(thread, 2); break;
-                case OpCode.Call03: OpCodeCallXX(thread, 3); break;
-                case OpCode.Call04: OpCodeCallXX(thread, 4); break;
-                case OpCode.Call05: OpCodeCallXX(thread, 5); break;
-                case OpCode.Call06: OpCodeCallXX(thread, 6); break;
-                case OpCode.Call07: OpCodeCallXX(thread, 7); break;
-                case OpCode.Call08: OpCodeCallXX(thread, 8); break;
-                case OpCode.Call09: OpCodeCallXX(thread, 9); break;
-                case OpCode.Call0A: OpCodeCallXX(thread, 10); break;
-                case OpCode.Call0B: OpCodeCallXX(thread, 11); break;
-                case OpCode.Call0C: OpCodeCallXX(thread, 12); break;
-                case OpCode.Call0D: OpCodeCallXX(thread, 13); break;
-                case OpCode.Call0E: OpCodeCallXX(thread, 14); break;
-                case OpCode.Call0F: OpCodeCallXX(thread, 15); break;
-                case OpCode.Call10: OpCodeCallXX(thread, 16); break;
-                case OpCode.Call11: OpCodeCallXX(thread, 17); break;
-                case OpCode.Call12: OpCodeCallXX(thread, 18); break;
-                case OpCode.Call13: OpCodeCallXX(thread, 19); break;
-                case OpCode.Call14: OpCodeCallXX(thread, 20); break;
-                case OpCode.Call15: OpCodeCallXX(thread, 21); break;
-                case OpCode.Call16: OpCodeCallXX(thread, 22); break;
-                case OpCode.Call17: OpCodeCallXX(thread, 23); break;
-                case OpCode.Call18: OpCodeCallXX(thread, 24); break;
-                case OpCode.Call19: OpCodeCallXX(thread, 25); break;
-                case OpCode.Call1A: OpCodeCallXX(thread, 26); break;
-                case OpCode.Call1B: OpCodeCallXX(thread, 27); break;
-                case OpCode.Call1C: OpCodeCallXX(thread, 28); break;
-                case OpCode.Call1D: OpCodeCallXX(thread, 29); break;
-                case OpCode.Call1E: OpCodeCallXX(thread, 30); break;
-                case OpCode.Call1F: OpCodeCallXX(thread, 31); break;
-                case OpCode.Call8Bit: OpCodeCall8Bit(thread); break;
-                case OpCode.Call32Bit: OpCodeCall32Bit(thread); break;
+                case OpCode.ShortCall3: OpCodeCallXX(_root, thread, 3); break;
+                case OpCode.Call00: OpCodeCallXX(_root, thread, 0); break;
+                case OpCode.Call01: OpCodeCallXX(_root, thread, 1); break;
+                case OpCode.Call02: OpCodeCallXX(_root, thread, 2); break;
+                case OpCode.Call03: OpCodeCallXX(_root, thread, 3); break;
+                case OpCode.Call04: OpCodeCallXX(_root, thread, 4); break;
+                case OpCode.Call05: OpCodeCallXX(_root, thread, 5); break;
+                case OpCode.Call06: OpCodeCallXX(_root, thread, 6); break;
+                case OpCode.Call07: OpCodeCallXX(_root, thread, 7); break;
+                case OpCode.Call08: OpCodeCallXX(_root, thread, 8); break;
+                case OpCode.Call09: OpCodeCallXX(_root, thread, 9); break;
+                case OpCode.Call0A: OpCodeCallXX(_root, thread, 10); break;
+                case OpCode.Call0B: OpCodeCallXX(_root, thread, 11); break;
+                case OpCode.Call0C: OpCodeCallXX(_root, thread, 12); break;
+                case OpCode.Call0D: OpCodeCallXX(_root, thread, 13); break;
+                case OpCode.Call0E: OpCodeCallXX(_root, thread, 14); break;
+                case OpCode.Call0F: OpCodeCallXX(_root, thread, 15); break;
+                case OpCode.Call10: OpCodeCallXX(_root, thread, 16); break;
+                case OpCode.Call11: OpCodeCallXX(_root, thread, 17); break;
+                case OpCode.Call12: OpCodeCallXX(_root, thread, 18); break;
+                case OpCode.Call13: OpCodeCallXX(_root, thread, 19); break;
+                case OpCode.Call14: OpCodeCallXX(_root, thread, 20); break;
+                case OpCode.Call15: OpCodeCallXX(_root, thread, 21); break;
+                case OpCode.Call16: OpCodeCallXX(_root, thread, 22); break;
+                case OpCode.Call17: OpCodeCallXX(_root, thread, 23); break;
+                case OpCode.Call18: OpCodeCallXX(_root, thread, 24); break;
+                case OpCode.Call19: OpCodeCallXX(_root, thread, 25); break;
+                case OpCode.Call1A: OpCodeCallXX(_root, thread, 26); break;
+                case OpCode.Call1B: OpCodeCallXX(_root, thread, 27); break;
+                case OpCode.Call1C: OpCodeCallXX(_root, thread, 28); break;
+                case OpCode.Call1D: OpCodeCallXX(_root, thread, 29); break;
+                case OpCode.Call1E: OpCodeCallXX(_root, thread, 30); break;
+                case OpCode.Call1F: OpCodeCallXX(_root, thread, 31); break;
+                case OpCode.Call8Bit: OpCodeCall8Bit(_root, thread); break;
+                case OpCode.Call32Bit: OpCodeCall32Bit(_root, thread); break;
 
                 default:
                     {
@@ -1511,7 +1511,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             is_push(0); if (DO_TWICE) is_push(0);
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             if (isLong)
                 thread.callFrame.iStack.Push(1);
             else
@@ -1529,7 +1529,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             is_push(1); if (DO_TWICE) is_push(1);
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             if (isLong)
                 thread.callFrame.iStack.Push(1);
             else
@@ -1550,7 +1550,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 			else is_push(v);
             LISTIA("iconst8 = %d", v);
 			*/
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Byte v = thread.CodeGetByte();
             if (isLong)
                 thread.callFrame.iStack.Push((Int64)v);
@@ -1572,7 +1572,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 			else         is_push(v);
             LISTIA("iconst32 = %d", v);
 			*/
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Int32 v = thread.CodeGetInt32();
             if (isLong)
                 thread.callFrame.iStack.Push((Int64)v);
@@ -1592,7 +1592,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             ls_push(v);
             LISTIA("iconst64 = %Ld", v);
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Int64 v = thread.CodeGetInt64();
             thread.callFrame.iStack.Push((Int64)v);
             Debug.WriteLine("iconst64 {0:d} @ {1:d}", v, ip);
@@ -1664,14 +1664,14 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 			LISTIA("jz (%d)", test);
             LISTIA("jz -> %d", new_IP);
 			*/
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Int32 jump = thread.CodeGetInt32();
             Debug.Write(string.Format("jz {0:d} @ {1:d}", jump, ip - 1));
             // (int) to make it signed to get bidirectional displacement
             var test = thread.callFrame.iStack.Pop();
             if (test == 0)
-                thread.ip = (uint)((int)ip + jump);
-            Debug.WriteLine(" // pop test={0:d} == 0 -> (@{1:d})", test, thread.ip);
+                thread.callFrame.ip = (uint)((int)ip + jump);
+            Debug.WriteLine(" // pop test={0:d} == 0 -> (@{1:d})", test, thread.callFrame.ip);
         }
 
         private void OpCodeSwitch(PvmThread thread)
@@ -1714,7 +1714,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// All the exception catchers pushed in this call are discarded.
         /// </summary>
         /// <param name="thread">current thread object</param>
-        private void OpCodeRet(PvmThread thread)
+        private void OpCodeRet(PvmRoot root, PvmThread thread)
         {
             /*
 			if (DEB_CALLRET || debug_print_instr) printf("\nret     (stack_depth %d -> ", da->stack_depth);
@@ -1729,12 +1729,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 			pvm_exec_do_return(da);
 			if (DEB_CALLRET || debug_print_instr) printf("%d)", da->stack_depth);
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             var ret = thread.callFrame.prev;
             Debug.Write(string.Format("ret @ {0:d}", ip - 1));
             if (ret == null)
                 throw new Exception("exit thread");
-            var returnVal = _root.NewNull();
+            var returnVal = root.NewNull();
             //_root.RefDec(thread.callFrame);
             thread.callFrame = ret;
             //thread.PvmExecLoadFastAcc();
@@ -1773,7 +1773,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 
 			es_push(eh); 
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             UInt32 addr = thread.CodeGetUInt32();
             Debug.WriteLine("push catcher {0:d} @ {1:d}", addr, ip - 1);
             var eh = new Tuple<PvmObject, uint>(null, addr); //TODO what object ?
@@ -1825,14 +1825,14 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// Put null object on stack.
         /// </summary>
         /// <param name="thread">current thread object</param>
-        private void OpCodeSummonNull(PvmThread thread)
+        private void OpCodeSummonNull(PvmRoot root, PvmThread thread)
         {
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Debug.WriteLine("push null @ {0:d}", ip - 1);
             /*
             os_push(pvm_get_null_object()); // so what OpCode.os_push_null is for then?
             */
-            thread.callFrame.oStack.Push(_root.NewNull());
+            thread.callFrame.oStack.Push(root.NewNull());
         }
 
         // summon thread  
@@ -1863,7 +1863,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// <param name="thread">current thread object</param>
         private void OpCodeSummonThis(PvmThread thread)
         {
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Debug.WriteLine("summon this @ {0:d}", ip - 1);
             /*
             os_push(ref_inc_o(this_object()));
@@ -1877,15 +1877,15 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// </summary>
         /// <param name="thread">current thread object</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OpCodeSummonStringClass(PvmThread thread)
+        private void OpCodeSummonStringClass(PvmRoot root, PvmThread thread)
         {
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             Debug.WriteLine("summon string class @ {0:d}", ip - 1);
             /*
             // locked refcnt
             os_push(pvm_get_string_class());
             */
-            thread.callFrame.oStack.Push(_root.stringClass);
+            thread.callFrame.oStack.Push(root.GetClassByName(".internal.string")); // stringClass);
         }
 
         private void OpCodeDynamicInvoke(PvmThread thread)
@@ -2019,7 +2019,7 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
             /*
             pvm_exec_get(da, pvm_code_get_int32(&(da->code)));
             */
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             UInt32 pos = thread.CodeGetUInt32();
             Debug.WriteLine("os stack get {1:d} @ {0:d} // push o", ip - 1, pos);
             var o = thread.callFrame.oStack.GetPos(pos);
@@ -2070,12 +2070,12 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// <param name="thread">current thread object</param>
         /// <param name="sysIndex">system call number</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void OpCodeSysX(PvmThread thread, uint sysIndex)
+        private void OpCodeSysX(PvmRoot root, PvmThread thread, uint sysIndex)
         {
-            var ip = thread.ip; ;
+            var ip = thread.callFrame.ip; ;
             Debug.WriteLine("sys {0:d} @ {2:d}", sysIndex, ip);
             thread.callFrame.thisObject.SysCall(
-                sysIndex, thread.callFrame.thisObject, thread);
+                root, (int)sysIndex, thread.callFrame.thisObject, thread);
             //sys_sleep:
 #if OLD_VM_SLEEP
 			// Only sys can put thread asleep
@@ -2097,13 +2097,13 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// </summary>
         /// <param name="thread">current thread object</param>
         /// <param name="sysIndex">system call number</param>
-        private void OpCodeSys8Bit(PvmThread thread)
+        private void OpCodeSys8Bit(PvmRoot root, PvmThread thread)
         {
-            var ip = thread.ip; ;
+            var ip = thread.callFrame.ip; ;
             var sysIndex = thread.CodeGetByte();
             Debug.WriteLine("sys {1:d} @ {0:d}", ip - 1, sysIndex);
             thread.callFrame.thisObject.SysCall(
-                sysIndex, thread.callFrame.thisObject, thread);
+                root, sysIndex, thread.callFrame.thisObject, thread);
         }
 
         // call methodIndex numberOfArgs 
@@ -2119,68 +2119,69 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
         /// </summary>
         /// <param name="thread">current thread</param>
         /// <param name="callIndex">called method number</param>
-        private void OpCodeCallXX(PvmThread thread, uint callIndex)
+        private void OpCodeCallXX(PvmRoot root, PvmThread thread, uint callIndex)
         {
-            var ip = thread.ip;
+            var ip = thread.callFrame.ip;
             var nArgs = thread.CodeGetByte();
             Debug.WriteLine("call {0:d} {1:d} @ {2:d}", callIndex, nArgs, ip - 1);
             //no optimization for soon return
-            ExecCall(thread, callIndex, nArgs, false, thread.callFrame.thisObject); // _root.NewNull());
+            ExecCall(root, thread, callIndex, nArgs, false, thread.callFrame.thisObject); // _root.NewNull());
         }
 
         /// <summary>
         /// Calls method taking index from stack and passing given number of args.
         /// </summary>
         /// <param name="thread">current thread</param>
-        private void OpCodeCall8Bit(PvmThread thread)
+        private void OpCodeCall8Bit(PvmRoot root, PvmThread thread)
         {
             /*
 			unsigned int method_index = pvm_code_get_byte(&(da->code));
             unsigned int n_param = pvm_code_get_int32(&(da->code));
             pvm_exec_call(da, method_index, n_param, 1, pvm_get_null_object());
 			*/
-            var ip = thread.ip; ;
+            var ip = thread.callFrame.ip; ;
             var callIndex = thread.CodeGetByte();
             var nArgs = thread.CodeGetByte();
             Debug.WriteLine("call {0:d} {1:d} @ {2:d}", callIndex, nArgs, ip);
             //no optimization for soon return
-            ExecCall(thread, callIndex, nArgs, false, _root.NewNull());
+            ExecCall(root, thread, callIndex, nArgs, false, root.NewNull());
         }
 
         /// <summary>
         /// Calls method taking index from stack and passing given number of args.
         /// </summary>
         /// <param name="thread">current thread</param>
-        private void OpCodeCall32Bit(PvmThread thread)
+        private void OpCodeCall32Bit(PvmRoot root, PvmThread thread)
         {
             /*
 			unsigned int method_index = pvm_code_get_int32(&(da->code));
             unsigned int n_param = pvm_code_get_int32(&(da->code));
             pvm_exec_call(da, method_index, n_param, 1, pvm_get_null_object());
 		    */
-            var ip = thread.ip; ;
+            var ip = thread.callFrame.ip; ;
             var callIndex = thread.CodeGetInt32();
             var nArgs = thread.CodeGetByte();
             Debug.WriteLine("call {0:d} {1:d} @ {2:d}", callIndex, nArgs, ip);
             //no optimization for soon return
-            ExecCall(thread, (uint)callIndex, nArgs, false, _root.NewNull());
+            ExecCall(root, thread, (uint)callIndex, nArgs, false, root.NewNull());
         }
 
-        private void ExecCall(PvmThread thread, uint callIndex, uint nParams,
+        private void ExecCall(PvmRoot root, PvmThread thread, uint callIndex, uint nParams,
             bool isOptimize, PvmObject thisObject)
         {
             Debug.WriteLine(" exec call {0:d} (stack_depth {1:d} -> ", callIndex, 1);
             //thread.PvmExecSaveFastAcc();
 
-            // Find start method
-            var code = thisObject.Iface.GetMethod((int)callIndex);
-
             // Create call frame
-            var newCf = _root.NewCallFrame(thisObject);
-            newCf.ip = 0;
-            newCf.ipMax = (uint)code.Code.GetLength(0); // code_size
-            newCf.code = code;
-            newCf.thisObject = thisObject;
+            var newCf = root.NewCallFrame(thisObject, (int)callIndex, null);
+
+            // Find start method
+            //var code = thisObject.Iface.GetMethod((int)callIndex);
+
+            //newCf.ip = 0;
+            //newCf.ipMax = (uint)code.Code.GetLength(0); // code_size
+            //newCf.code = code;
+            //newCf.thisObject = thisObject;
             //_root.RefInc(thisObject);
 
             // Prepare argiments

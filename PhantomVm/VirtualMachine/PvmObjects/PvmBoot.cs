@@ -9,15 +9,17 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
 {
     public class PvmBoot : PvmObject
     {
-        //private PvmBootSc _scBoot;
+        private IPvmBoot _systemCalls;
+
         public PvmBoot(PvmClass objectClass, IPvmBoot systemCalls)
             : base(objectClass)
         {
             // Create object of specified class.
             this.Iface = objectClass.IfaceDefault;
+
             // Fill desired fields. 
             // System calls.
-            //_systemCalls = systemCalls;
+            _systemCalls = systemCalls;
             /*
             if (sysCalls.GetLength(0) < 17)
             {
@@ -32,5 +34,26 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.PvmObjects
         }
 
         public override string ToString() => "PvmBoot";
+
+        #region Methods
+
+        override public void SysCall(PvmRoot root, int sysIndex, PvmObject thisObject, PvmThread thread)
+        {
+            switch (sysIndex)
+            {
+                case 0: _systemCalls.Print(); break;
+                case 8:
+                    {
+                        PvmString classNamePvm = (PvmString)thread.callFrame.oStack.Pop();
+                        string className = classNamePvm.ToString();
+                        PvmClass pvmClass = _systemCalls.LoadPvmClass(root, className);
+                        thread.callFrame.oStack.Push(pvmClass);
+                        break;
+                    }
+                default: throw new NotImplementedException();
+            }
+        }
+
+        #endregion
     };
 }
