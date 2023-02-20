@@ -1349,9 +1349,9 @@ namespace Cc.Anba.PhantomOs.VirtualMachine.Machine
 
                 // Moves ip to catcher location.
                 case OpCode.Throw: OpCodeThrow(thread); break;
-                // Places chatcher location on exception stack.
+                // Places catcher location on exception stack.
                 case OpCode.PushCatcher: OpCodePushCatcher(thread); break;
-                // Removews chatcher.
+                // Removews catcher.
                 case OpCode.PopCatcher: OpCodePopCatcher(thread); break;
 
                 // ok, now method calls ------------------------------------------------------

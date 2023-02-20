@@ -1,0 +1,58 @@
+// Run method no. 8 from "phantom.system.boot" class
+0: Iconst32bit // Gets from code 4 bytes and puts them on top of integer stack. // Push "1"
+5: Isublu // pop u=1, pop l=1, push l-u=0
+6: Js // pop test=0 == 0 -> (@65)
+65: SummonNull // Put null object on stack.
+66: SummonNull // Put null object on stack.
+67: SummonStringClass // Put string object on stack.
+/// Top of stack must contain class object. 
+/// Exceptions of that class will be catched here and control 
+/// will be passed to a label if such exception is thrown.
+/// Thrown object will be on stack top in this case. In general 
+/// no other assumptions about stack state can be done.
+68: PushCatcher // Places chatcher location on exception stack. // Get address from next 4 bytes (here addr = 19)
+73: SummonThis // Puts this object reference on stack.
+74: OsGet32 // Gets object from stack at position. // Position gets from next 4 bytes (here pos = 0) and ".ru.dz.phantom.system.boot" is there
+/// Calls selected method passing given number of args.
+/// Top of integer stack of called method will have 
+/// number of arguments passed. After the return exactly 
+/// one object (possibly null) will be on the object stack.
+75: Call15 // OpCodeCallXX // Calls selected method (here no. = 21, nArgs = 1)
+
+0: Iconst32bit // iconst32 1
+1: isublu @ 5 // pop u=1, pop l=1, push l-u=0
+6: jz 61 @ 6 // pop test=0 == 0 -> (@68)
+68: push null @ 68
+69: push null @ 69
+70: push null 
+71: push null 
+72: iconst32 1 @ 72
+73: i2o
+74: OsDup
+// Byte i = thread.CodeGetByte(); // here i = 0
+// var o = thread.callFrame.oStack.Pop();
+// thread.callFrame.thisObject.Fields.SetOrdinal(i, o);
+//   if (Array.Count <= ordinal)
+//     for (int i = Array.Count; i <= ordinal; i++)
+//       Array.Add(value);
+75: OsSave8 // Get next 1 byte (here = 0)
+81: OsDrop // Drop object from top of object stack
+82: OsGet32 // Gets object from stack at position. (here pos = 0, object = NullObject) // So here is add additional NullObj on stack.
+87: OsDup 
+88: OsSave8 // (here i = 1) and save on object stack.
+90: OsDrop
+91: SummonThis // summon this @ 91
+92: SconstBin // get string from code "Phantom System Envirinment Setup is running\n" and put on object stack
+142: Call11 // OpCodeCallXX // Calls selected method (here no. = 17, nArgs = 1) from this class (this = "system.boot")
+
+0: iconst32 1 @ 0 //
+1: isublu @ 5 // pop u=1, pop l=1, push l-u=0
+6: jz 56 @ 6 // pop test=0 == 0 -> (@63)
+63: push null @ 63
+64: OsLoad8 // (here i = 1, object at [1] = NullObject) and push on object stack
+66: // get object at pos = 0 and put it on stack (NullObject)
+67: Call10 // OpCodeCallXX // Calls selected method (here no. = 16, nArgs = 1 (Null)) from this class (this = "system.boot")
+
+6: jz 56 @ 6 // pop test=1 == 0 -> (@11)
+11: SconstBin // "arg count: sleep in .ru.dz.phantom.system.boot"
+63: Throw // exception

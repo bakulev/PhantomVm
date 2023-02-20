@@ -48,7 +48,13 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Codegen.cs" />
+    <Compile Include="Classes\CodeLoader.cs" />
     <Compile Include="VirtualMachine\IPvmBoot.cs" />
+    <Compile Include="VirtualMachine\Machine\Code.cs" />
+    <Compile Include="VirtualMachine\Machine\Instructions\Call8Bit.cs" />
+    <Compile Include="VirtualMachine\Machine\Instructions\Instruction.cs" />
+    <Compile Include="VirtualMachine\Machine\Instructions\Jz.cs" />
     <Compile Include="VirtualMachine\Machine\Processor.cs" />
     <Compile Include="VirtualMachine\OpCodes.cs" />
     <Compile Include="VirtualMachine\PvmObjects\PvmArray.cs" />
@@ -73,8 +79,6 @@
   <ItemGroup>
     <Resource Include="README.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

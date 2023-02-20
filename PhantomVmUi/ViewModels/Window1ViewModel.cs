@@ -9,6 +9,7 @@ using Cc.Anba.PhantomOs.VirtualMachine;
 using Cc.Anba.PhantomOs.VirtualMachine.Machine;
 using System.Diagnostics;
 using Cc.Anba.PhantomOs.Apps.VmUi.Utils;
+using Cc.Anba.PhantomOs.VirtualMachine.Classes;
 
 namespace Cc.Anba.PhantomOs.Apps.VmUi
 {
@@ -37,6 +38,9 @@ namespace Cc.Anba.PhantomOs.Apps.VmUi
 
             // External helper loads a class from a file into a VM memory. TODO Should be referenced from systemBoot object.
             var userBootClass = systemInterface.LoadPvmClass(_pvmRoot, @"..\..\..\PhantomVm\Classes\ru.dz.phantom.system.boot.pc");
+            var instrs = Code.Decode(userBootClass.IfaceDefault.Methods[21].Code);
+
+            string disasm = CodeLoader.Decompile(userBootClass.IfaceDefault.Methods[21].Code);
             // Create an object of the loaded class.
             var userBootObject = _pvmRoot.NewObject(userBootClass); 
 
