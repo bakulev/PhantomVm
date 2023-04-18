@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Classes\Codegen.cs" />
     <Compile Include="Classes\CodeLoader.cs" />
+    <Compile Include="Classes\Dump.cs" />
     <Compile Include="VirtualMachine\IPvmBoot.cs" />
     <Compile Include="VirtualMachine\Machine\Code.cs" />
     <Compile Include="VirtualMachine\Machine\Instructions\Call8Bit.cs" />
